@@ -1,11 +1,10 @@
 import numpy as np
 import sys
 
-
 if __name__ == "__main__":
 	debug = True
 	if len(sys.argv) > 1 and sys.argv[1] == "nodebug":
-		debug = False
+		debug = False		
 
 ### Helpful Functions
 def matrixMultiplication(A, B):
@@ -26,6 +25,15 @@ def swapRows(A: np.array, index1: int , index2: int):
 	A[index2] = A[index1]
 	A[index1] = temp
 	return A
+
+def isSymettric(A: np.array):
+	if A.shape[0] != A.shape[1]: 
+		return False
+	for i in range(A.shape[0]):
+		for j in range(A.shape[0]):
+			if A[i][j] != A[j][i]:
+				return False
+	return True
 
 """P 1.1 Implement the Algorithm 3.1.3 column-oriented forward substitution. Find an example to
 verify your code."""
@@ -53,7 +61,7 @@ matrix = np.array([[2, 0, 0],
 				   [1, 5, 0],
 				   [7, 9, 8]])
 b = np.array([6.0, 2.0, 5.0])
-if debug:
+if debug or "q1" in sys.argv:
 	print("Question 1")
 	print(columnOrientedForwardSub(matrix, b))
 	print()
@@ -85,7 +93,7 @@ matrix = np.array([
 	[0.0, 0.0, 4.0]
 ])
 b = np.array([5.0, 11.0, 12.0])
-if debug:
+if debug or "q2" in sys.argv:
 	print("Question 2")
 	print(columnOrienteBackwardSub(matrix, b)) 
 	print("Expected Result is [19/6, 5/3, 3.0]\n")
@@ -129,9 +137,9 @@ def outerProductLU(A: np.array):
 
 	return L, U
 
-if debug:
-	L, U = outerProductLU(A)
+if debug or "q3" in sys.argv:
 	print("Question #3")
+	L, U = outerProductLU(A)
 	print("L = ", L)
 	print("U = ", U)
 	print()
@@ -186,7 +194,7 @@ A2 = np.array([
 	[6, 18, -12]
 ], dtype=float)
 
-if debug:
+if debug or "q4" in sys.argv:
 	print("Question 4")
 	P, L, U = LUWithPartialPivoting(A2.copy())
 	print("P = ", P)
@@ -201,3 +209,49 @@ if debug:
 	print(A1)
 	print("PA = ", matrixMultiplication(P, A1), "\n = \n", matrixMultiplication(L, U), " = LU")
 	print()
+
+"""P 1.5 Implement the algorithm 4.1.1 LDLT decomposition. Find an example to verify your code"""
+def LDLT(A: np.array):
+	"""
+	Function takes a symettric non-singular matrix A and computes A = LDL^T. Where L is lower triangular and U is upper triangular
+
+	Returns matrix L and D
+	"""
+	if A.shape[0] != A.shape[1]:
+		return "Matrix not square"
+	
+	if not isSymettric(A):
+		return "Matrix is not symetteric"
+	v = np.zeros(A.shape[0])
+	for j in range(A.shape[0]):
+		for i in range(j):
+			v[i] = A[j][i] * A[i][i]
+		
+		for i in range(j):
+			A[j][j] = A[j][j] - (A[j][i] * v[i])
+		
+		# Update the elements below the diagonal for the lower triangular matrix L
+		A[j+1:, j] = (A[j+1:, j] - np.dot(A[j+1:, :j], v[:j])) / A[j, j]
+	
+	L = np.tril(A, -1) + np.eye(A.shape[0])  # Lower triangular matrix with ones on the diagonal
+	D = np.diag(A)
+	return L, D
+
+A = np.array([
+	[4, 12, -16],
+	[12, 37, -43],
+	[-16, -43, 98]
+], dtype=float)
+
+if debug or "q5" in sys.argv:
+	print("Question 5")
+	L, D = LDLT(A)
+	print("L = ", L)
+	print("D = ", D)
+
+"""P 1.6 Implement the algorithm 4.2.1 Cholesky Decomposition. And use it to solve the linear systems
+6x + 15y + 55z = 76,
+15x + 55y + 225z = 295,
+55x + 225y + 979z = 1259."""
+def CholeskyDecomp(A: np.array):
+	return
