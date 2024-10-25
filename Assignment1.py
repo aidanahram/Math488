@@ -254,4 +254,44 @@ if debug or "q5" in sys.argv:
 15x + 55y + 225z = 295,
 55x + 225y + 979z = 1259."""
 def CholeskyDecomp(A: np.array):
-	return
+	"""
+	Function takes a symettric positive definite matrix A and computes Cholesky Decompostion of A = GG^T. 
+
+	Returns matrix G
+	"""
+	if A.shape[0] != A.shape[1]:
+		return "Matrix not square"
+	
+	if not isSymettric(A):
+		return "Matrix is not symetteric"
+	
+	v = np.zeros(A.shape[0])
+	G = np.zeros(A.shape)
+	for j in range(A.shape[0]):
+		for i in range(j, A.shape[0]):
+			v[i] = A[i][j]
+		for k in range(j):
+			for i in range(j, A.shape[0]):
+				v[i] = v[i] - (G[j][k] * G[i][k])
+		for i in range(j, A.shape[0]):
+			G[i][j] = v[i] / np.sqrt(v[j])
+	
+	print(G)
+	return G
+
+A = np.array([
+	[4, 1, 2],
+	[1, 3, 0],
+	[2, 0, 5]
+], dtype=float)
+
+if debug or "q6" in sys.argv:
+	print("Question 6")
+	G = CholeskyDecomp(A.copy())
+	
+	print("G = ", G)
+	print("G^t = ", G.T)
+	print("A = ", A, "\n = \n", matrixMultiplication(G, G.T))
+	L = np.linalg.cholesky(A.copy())
+	print(L)
+
