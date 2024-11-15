@@ -10,6 +10,45 @@ if __name__ == "__main__":
 		
 """P 1.1 Implement the Algorithm 5.2.1 (Householder QR), and calculate the QR decomposition for
 the matrix"""
+def house2(x: np.array):
+	lengthsq = 0
+	for i in range(x.shape[0]):
+		lengthsq += x[i] ** 2
+	beta = np.sqrt(lengthsq)
+	e = np.zeros(x.shape[0])
+	e[0] = 1
+	v = x - beta * e
+	lengthv = 0
+	print("beta is: ", beta)
+	print("v = x - beta * e = ", v)
+	for i in range(v.shape[0]):
+		lengthv += v[i] ** 2
+	lengthv = np.sqrt(lengthv)
+	u = v / lengthv
+	print("lengthv = ", lengthv, " u is ", u)
+	
+	return u, beta
+
+def HouseHolderQR2(A: np.array):
+	if A.shape[0] < A.shape[1]: 
+		return "Matrix has more columns than rows"
+	QT = np.identity(A.shape[0], dtype=float)
+	for i in range(A.shape[1] - 1): # For each column we need the householder matrix
+		x = A[i:, i]
+		print("x is: ", x, "\ncalling house on x")
+		v, beta = house2(x)
+		P = np.identity(x.shape[0]) - 2 * multiply_vector_transpose(v)
+		H = np.identity(A.shape[0], dtype=float)
+		H[i:, i:] = P
+		print("The householder matrix H is:\n", H)
+		QT = H @ QT
+		print("The householder matrix P is:\n", P, "\n\n\n")
+		A = H @ A
+
+	print(A)
+	return
+
+
 def house(x):
     m = len(x)
     sigma = np.dot(x[1:], x[1:])  # σ = x(2:m)^T * x(2:m)
@@ -59,8 +98,10 @@ A = np.array([
 ], dtype=float)
 if debug or "q1" in sys.argv:
     print("Question 1")
-    A = HouseHolderQR(A)
-    print(A)
+    HouseHolderQR2(A.copy())
+    #//A = HouseHolderQR(A)
+    #print(A)
+    print(np.linalg.qr(A))
 
 """P 1.2 Implement the Algorithm 5.2.4 (Given QR), and calculate the QR decomposition for the
 same matrix"""
@@ -125,4 +166,18 @@ if debug or "q3" in sys.argv:
     x = normal_equations(A, b)  
     print(x)
 
+"""P 1.4 Implement the Algorithm 5.3.2 (Householder LS Solution). And find an example to verify
+your code."""
+A = np.array([
+    [1, 1, 0],
+    [1, 0, 1],
+    [0, 1, 1]
+], dtype=float)
+if debug or "q4" in sys.argv:
+	print("Question 4")
+	new = HouseHolderQR(A.copy())
+	print(new)
+	Q, R = np.linalg.qr(A)
+	print(Q)
+	print(R)
 

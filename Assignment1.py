@@ -34,7 +34,7 @@ matrix = np.array([[2, 0, 0],
 				   [1, 5, 0],
 				   [7, 9, 8]])
 b = np.array([6.0, 2.0, 5.0])
-if debug or "q1" in sys.argv:
+if __name__ == "__main__" and (debug or "q1" in sys.argv):
 	print("Question 1")
 	print(columnOrientedForwardSub(matrix, b))
 	print()
@@ -66,7 +66,7 @@ matrix = np.array([
 	[0.0, 0.0, 4.0]
 ])
 b = np.array([5.0, 11.0, 12.0])
-if debug or "q2" in sys.argv:
+if __name__ == "__main__" and (debug or "q2" in sys.argv):
 	print("Question 2")
 	print(columnOrienteBackwardSub(matrix, b)) 
 	print("Expected Result is [19/6, 5/3, 3.0]\n")
@@ -110,7 +110,7 @@ def outerProductLU(A: np.array):
 
 	return L, U
 
-if debug or "q3" in sys.argv:
+if __name__ == "__main__" and (debug or "q3" in sys.argv):
 	print("Question #3")
 	L, U = outerProductLU(A)
 	print("L = ", L)
@@ -167,7 +167,7 @@ A2 = np.array([
 	[6, 18, -12]
 ], dtype=float)
 
-if debug or "q4" in sys.argv:
+if __name__ == "__main__" and (debug or "q4" in sys.argv):
 	print("Question 4")
 	P, L, U = LUWithPartialPivoting(A2.copy())
 	print("P = ", P)
@@ -216,7 +216,7 @@ A = np.array([
 	[-16, -43, 98]
 ], dtype=float)
 
-if debug or "q5" in sys.argv:
+if __name__ == "__main__" and (debug or "q5" in sys.argv):
 	print("Question 5")
 	L, D = LDLT(A)
 	print("L = ", L)
@@ -257,7 +257,7 @@ A = np.array([
 	[2, 0, 5]
 ], dtype=float)
 
-if debug or "q6" in sys.argv:
+if __name__ == "__main__" and (debug or "q6" in sys.argv):
 	print("Question 6")
 	G = CholeskyDecomp(A.copy())
 	
