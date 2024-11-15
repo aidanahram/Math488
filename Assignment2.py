@@ -50,7 +50,7 @@ def HouseHolderQR(A: np.array):
             # Q = Q @ tempQ
 
     return A
-# Example usage
+
 A = np.array([
     [1, 1, 0],
     [1, 0, 1],
@@ -60,3 +60,38 @@ if debug or "q1" in sys.argv:
     print("Question 1")
     A = HouseHolderQR(A)
     print(A)
+
+"""P 1.2 Implement the Algorithm 5.2.4 (Given QR), and calculate the QR decomposition for the
+same matrix"""
+def givens_rotation(a, b):
+    """Compute the Givens rotation matrix for a and b."""
+    r = np.sqrt(a**2 + b**2)
+    c = a / r
+    s = -b / r
+    return c, s
+
+def qr_givens(A):
+    """Perform QR factorization using Givens rotations."""
+    m, n = A.shape
+    R = A.copy()
+    Q = np.identity(m)
+
+    for i in range(0, n - 1):
+        for j in range(i + 1, m):
+            if R[i, j] != 0:
+                cos, sin = givens_rotation(R[i, i], R[j, i])
+                R[i], R[j] = (R[i] * cos - R[j] * sin), (R[i] * sin + R[j] * cos)
+                Q[:, i], Q[:, j] = (Q[:, i] * cos - Q[:, j] * sin), (Q[:, i] * sin + Q[:, j] * cos)
+
+    return Q, R
+
+A = np.array([
+    [1, 1, 0],
+    [1, 0, 1],
+    [0, 1, 1]
+], dtype=float)
+if debug or "q2" in sys.argv:
+    print("Question 2")
+    Q, R = qr_givens(A)
+    print("Q is:\n", Q)
+    print("R is:\n", R)
