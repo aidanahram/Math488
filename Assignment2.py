@@ -3,6 +3,7 @@ import sys
 from utils import *
 from Assignment1 import *
 
+debug = False
 if __name__ == "__main__":
 	debug = True
 	if len(sys.argv) > 1 and sys.argv[1] == "nodebug":
@@ -11,6 +12,7 @@ if __name__ == "__main__":
 """P 1.1 Implement the Algorithm 5.2.1 (Householder QR), and calculate the QR decomposition for
 the matrix"""
 def house2(x: np.array):
+	if(x.shape[0] == 1): return np.zeros(1), 0
 	lengthsq = 0
 	for i in range(x.shape[0]):
 		lengthsq += x[i] ** 2
@@ -19,34 +21,29 @@ def house2(x: np.array):
 	e[0] = 1
 	v = x - beta * e
 	lengthv = 0
-	print("beta is: ", beta)
-	print("v = x - beta * e = ", v)
+	# print("beta is: ", beta)
+	# print("v = x - beta * e = ", v)
 	for i in range(v.shape[0]):
 		lengthv += v[i] ** 2
 	lengthv = np.sqrt(lengthv)
 	u = v / lengthv
-	print("lengthv = ", lengthv, " u is ", u)
-	
 	return u, beta
 
 def HouseHolderQR2(A: np.array):
 	if A.shape[0] < A.shape[1]: 
 		return "Matrix has more columns than rows"
 	QT = np.identity(A.shape[0], dtype=float)
-	for i in range(A.shape[1] - 1): # For each column we need the householder matrix
+	for i in range(A.shape[1]): # For each column we need the householder matrix
 		x = A[i:, i]
-		print("x is: ", x, "\ncalling house on x")
+		# print("x is: ", x, "\ncalling house on x")
 		v, beta = house2(x)
 		P = np.identity(x.shape[0]) - 2 * multiply_vector_transpose(v)
 		H = np.identity(A.shape[0], dtype=float)
 		H[i:, i:] = P
-		print("The householder matrix H is:\n", H)
 		QT = H @ QT
-		print("The householder matrix P is:\n", P, "\n\n\n")
-		A = H @ A
+		A = H @ A # A gets over written as R at the end
 
-	print(A)
-	return
+	return QT.T, A
 
 
 def house(x):
@@ -96,12 +93,11 @@ A = np.array([
     [1, 0, 1],
     [0, 1, 1]
 ], dtype=float)
-if debug or "q1" in sys.argv:
+if __name__ == "__main__" and (debug or "q1" in sys.argv):
     print("Question 1")
-    HouseHolderQR2(A.copy())
-    #//A = HouseHolderQR(A)
-    #print(A)
-    print(np.linalg.qr(A))
+    Q, R = HouseHolderQR2(A.copy())
+    print("Q is:\n", Q)
+    print("R is:\n", R)
 
 """P 1.2 Implement the Algorithm 5.2.4 (Given QR), and calculate the QR decomposition for the
 same matrix"""
@@ -132,7 +128,7 @@ A = np.array([
     [1, 0, 1],
     [0, 1, 1]
 ], dtype=float)
-if debug or "q2" in sys.argv:
+if __name__ == "__main__" and (debug or "q2" in sys.argv):
     print("Question 2")
     Q, R = qr_givens(A)
     print("Q is:\n", Q)
@@ -161,7 +157,7 @@ A = np.array([
 ], dtype=float)
 b = np.array([1, 2, 3], dtype=float)
 
-if debug or "q3" in sys.argv:
+if __name__ == "__main__" and (debug or "q3" in sys.argv):
     print("Question 3")
     x = normal_equations(A, b)  
     print(x)
