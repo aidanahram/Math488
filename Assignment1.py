@@ -2,6 +2,7 @@ import numpy as np
 import sys
 from utils import *
 
+debug = False
 if __name__ == "__main__":
 	debug = True
 	if len(sys.argv) > 1 and sys.argv[1] == "nodebug":
@@ -248,7 +249,6 @@ def CholeskyDecomp(A: np.array):
 		for i in range(j, A.shape[0]):
 			G[i][j] = v[i] / np.sqrt(v[j])
 	
-	print(G)
 	return G
 
 A = np.array([

@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 from utils import *
+from Assignment1 import *
 
 if __name__ == "__main__":
 	debug = True
@@ -95,3 +96,33 @@ if debug or "q2" in sys.argv:
     Q, R = qr_givens(A)
     print("Q is:\n", Q)
     print("R is:\n", R)
+
+"""P 1.3 Implement the Algorithm 5.3.1 (Normal Equations) to solve the least square problem. And
+find an example to verify your code."""
+def normal_equations(A: np.array, b: np.array):
+    """Solve the least squares problem using normal equations."""
+    if A.shape[1] != np.linalg.matrix_rank(A):
+        return "Matrix is not full rank"
+    
+    C = A.T @ A
+    d = A.T @ b
+
+    G = CholeskyDecomp(C)
+    print(G, d)
+    y = columnOrientedForwardSub(G, d)
+    x = columnOrienteBackwardSub(G.T, y)
+    return x
+
+A = np.array([
+    [1, 1, 0],
+    [1, 0, 1],
+    [0, 1, 1]
+], dtype=float)
+b = np.array([1, 2, 3], dtype=float)
+
+if debug or "q3" in sys.argv:
+    print("Question 3")
+    x = normal_equations(A, b)  
+    print(x)
+
+
