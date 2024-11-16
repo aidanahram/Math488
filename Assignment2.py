@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import time
 from utils import *
 from Assignment1 import *
 
@@ -145,35 +146,63 @@ def normal_equations(A: np.array, b: np.array):
     d = A.T @ b
 
     G = CholeskyDecomp(C)
-    print(G, d)
     y = columnOrientedForwardSub(G, d)
     x = columnOrienteBackwardSub(G.T, y)
     return x
 
-A = np.array([
+A1 = np.array([
     [1, 1, 0],
     [1, 0, 1],
     [0, 1, 1]
+], dtype=float)
+A2 = np.array([
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1]
 ], dtype=float)
 b = np.array([1, 2, 3], dtype=float)
 
 if __name__ == "__main__" and (debug or "q3" in sys.argv):
     print("Question 3")
-    x = normal_equations(A, b)  
-    print(x)
+    x = normal_equations(A1.copy(), b) 
+    print("My x_ls is:\n", x)
+    y = np.linalg.lstsq(A1.copy(), b, rcond=None)[0]
+    print("np.lingal.lstsq() is:\n", y)
+    x = normal_equations(A2.copy(), b) 
+    print("My x_ls is:\n", x)
+    y = np.linalg.lstsq(A2.copy(), b, rcond=None)[0]
+    print("np.lingal.lstsq() is:\n", y)
 
 """P 1.4 Implement the Algorithm 5.3.2 (Householder LS Solution). And find an example to verify
 your code."""
-A = np.array([
-    [1, 1, 0],
-    [1, 0, 1],
-    [0, 1, 1]
-], dtype=float)
-if debug or "q4" in sys.argv:
+def HouseHolderLS(A: np.array, b: np.array):
+    """Solve the least squares problem using Householder QR.
+	A = QR, Ax = QRx = b, Rx = Q^Tb
+    """
+    if A.shape[1] != np.linalg.matrix_rank(A):
+        return "Matrix is not full rank"
+    Q, R = HouseHolderQR2(A)
+    
+    y = Q.T @ b
+    x = np.linalg.inv(R) @ y
+    
+    return x
+
+if __name__ == "__main__" and (debug or "q4" in sys.argv):
 	print("Question 4")
-	new = HouseHolderQR(A.copy())
-	print(new)
-	Q, R = np.linalg.qr(A)
-	print(Q)
-	print(R)
+	x = HouseHolderLS(A1.copy(), b)
+	print("My x_ls is:\n", x)
+	y = np.linalg.lstsq(A1.copy(), b, rcond=None)[0]
+	print("np.lingal.lstsq() is:\n", y)
+	print("\n\n\nComparing HouseHolderLS with normal_equations")
+	start = time.time()
+	x = normal_equations(A1.copy(), b)
+	print("It took: ", time.time() - start, "For normal_equations")
+	start = time.time()
+	x = HouseHolderLS(A1.copy(), b)
+	print("It took: ", time.time() - start, "For HouseHolderLS")
+	
+
+
+
 
