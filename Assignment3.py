@@ -27,20 +27,42 @@ q = np.array([
 	[1],
 	[1]
 ])
+A2 = np.array([
+	[2,0,0,0],
+	[1,4,0,1],
+	[3,1,5,2],
+	[0,0,0,1]
+])
+q2 = np.array([
+	[1],
+	[0],
+	[1],
+	[0]
+])
+# Eigenvalues
+# λ_1 = 5
+# λ_2 = 4
+# λ_3 = 2
+# λ_4 = 1
+# Eigenvectors
+# v_1 = (0, 0, 1, 0)
+# v_2 = (0, -1, 1, 0)
+# v_3 = (-6, 3, 5, 0)
+# v_4 = (0, -4, -5, 12)
 if __name__ == "__main__" and (debug or "q1" in sys.argv):
 	print("Question 1")
-	q = powerMethod(A.copy(), q, 100)
-	print("q is:\n", q)
+	iterations = 100
+	q = powerMethod(A.copy(), q, iterations)
+	print(f"After {iterations} q is:\n {q}")
+	q = powerMethod(A2.copy(), q2, iterations)
+	print(f"After {iterations} q is:\n {q}")
 
-# Suppose A ∈ Cn×n and X−1AX = diag(λ1,...,λn) with X = [ x1 |···| xn ] . Assume
-# that
-# |λ1| > |λ2| ≥···≥ |λn|.
-# Given a unit 2-norm q(0) ∈ Cn, the power method produces a sequence of vectors q(k)
-# as follows:
-# for k = 1, 2,...
-# z(k) = Aq(k−1)
-# q(k) = z(k)
-# / z(k) 2 (7.3.3)
-# λ(k) = [q(k)
-# ]
-# HAq(k)
+"""P 1.2 Implement the Orthogonal Iteration in 7.3.2. See 8.2.4 as well. And use an example to verify
+your code can find the first few largest eigenvalues and their corresponding eigenvector subspace."""
+def orthogonalIteration(A: np.array, maxIter: int):
+	n = A.shape[0]
+	Q = np.random.rand(n, n)
+	for i in range(maxIter):
+		Q, R = np.linalg.qr(Q)
+		Q = matrixMultiplication(A, Q)
+	return Q
